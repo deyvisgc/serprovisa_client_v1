@@ -21,7 +21,7 @@ export class LineaService {
     return this.http
     .put<any>(`${UriConstante.LINEA_RESORCE}/${id}` , linea)
   }
-  getAll(limit: number, offset: number, page: number):Observable<any>  {
+  getAll(limit: number, offset: number, page: number, ):Observable<any>  {
     const params = new HttpParams()
     .append("limit", limit)
     .append("offset", offset)
@@ -30,6 +30,9 @@ export class LineaService {
   }
   getById(id: number) : Observable<any> {
     return this.http.get<any>(UriConstante.LINEA_RESORCE +   `/${id}` )
+  }
+  getByIdFamilia(id: number) : Observable<any> {
+    return this.http.get<any>(UriConstante.LINEA_FAMILIA_RESORCE +   `/${id}` )
   }
   delete(id:number) {
     return this.http.delete<any>(UriConstante.LINEA_RESORCE +   `/${id}` )

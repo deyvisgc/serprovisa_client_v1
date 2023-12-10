@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { LineaRequest } from 'src/app/core/interface/linea.request';
 import { GrupoRequest } from 'src/app/core/interface/grupo.request';
 import { UriConstante } from 'src/app/util/UriConstante';
+import { FiltrosGrupo } from './../../core/interface/filtros.request';
 
 @Injectable({
   providedIn: 'root'
@@ -21,11 +22,19 @@ export class GrupoService {
     return this.http
     .put<any>(`${UriConstante.GRUPO_RESORCE}/${id}` , linea)
   }
-  getAll(limit: number, offset: number, page: number):Observable<any>  {
+  getAll(limit: number, offset: number, page: number, filtros: FiltrosGrupo):Observable<any>  {
+    const dayIni = filtros.fecha_ini.day < 10 ? `0${filtros.fecha_ini.day}` : filtros.fecha_ini.day ;
+    const dayFin = filtros.fecha_fin.day < 10 ? `0${filtros.fecha_fin.day}` : filtros.fecha_fin.day;
+    console.log(dayIni)
+    console.log(dayFin)
     const params = new HttpParams()
     .append("limit", limit)
     .append("offset", offset)
     .append("page", page)
+    .append("fecha_ini", `${filtros.fecha_ini.year}-${filtros.fecha_ini.month}-${dayIni}`)
+    .append("fecha_fin", `${filtros.fecha_fin.year}-${filtros.fecha_fin.month}-${dayFin}`)
+    .append("familia", filtros.famila)
+    .append("linea", filtros.linea);
     return this.http.get(UriConstante.GRUPO_RESORCE, {params: params});
   }
   getById(id: number) : Observable<any> {

@@ -19,6 +19,9 @@ import { FamilyComponent } from './family/family.component';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { GrupoComponent } from './grupo/grupo.component';
 import { LineaComponent } from './linea/linea.component';
+import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCalendar, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { JsonPipe } from '@angular/common';
 const routes: Routes = [
   {
     path: "admin",
@@ -47,6 +50,9 @@ const routes: Routes = [
     NgbModule,
     CoreModule,
     NgbAlertModule,
+    NgbCollapseModule,
+    NgbDatepickerModule, 
+    JsonPipe,
     NgbdpaginationBasicComponent,
     NgbdAlertBasicComponent,
     NgbdDropdownBasicComponent,
