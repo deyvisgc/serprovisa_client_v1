@@ -17,8 +17,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { CoreModule } from '../core/core.module';
 import { FamilyComponent } from './family/family.component';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
-import { LineaComponent } from './linea/linea.component';
 import { GrupoComponent } from './grupo/grupo.component';
+import { LineaComponent } from './linea/linea.component';
 const routes: Routes = [
   {
     path: "admin",
@@ -27,6 +27,10 @@ const routes: Routes = [
   {
     path: "family",
     component: FamilyComponent,
+  },
+  {
+    path: "linea",
+    component: LineaComponent,
   },
 ];
 @NgModule({
