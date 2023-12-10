@@ -103,11 +103,11 @@
                             <div class="form-group">
                                 <label for="exampleInputPassword1">Seleccionar Familia</label>
                                 <div class="custom-dropdown-container">
-                                  <ng-select [ngClass]="{ 'is-invalid': submitted && grupoFormGroup.get('id_linea')?.errors }" [items]="linea"
-                                    bindLabel="des_line" formControlName="id_linea" bindValue="id_line">
+                                  <ng-select [ngClass]="{ 'is-invalid': submitted && grupoFormGroup.get('id_familia')?.errors }" [items]="familia"
+                                    bindLabel="des_fam" formControlName="id_familia" bindValue="id_fam">
                                   </ng-select>
-                                  <div *ngIf="submitted && grupoFormGroup.get('id_linea')?.errors" class="invalid-feedback">
-                                    <div *ngIf="grupoFormGroup.get('id_linea')?.errors?.['required']">Familia es requerida</div>
+                                  <div *ngIf="submitted && grupoFormGroup.get('id_familia')?.errors" class="invalid-feedback">
+                                    <div *ngIf="grupoFormGroup.get('id_familia')?.errors?.['required']">Familia es requerida</div>
                                   </div>
                                 </div>
                               </div>

@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { GrupoRequest } from 'src/app/core/interface/grupo.request';
 import { GrupoService } from '../service/grupo.service';
 import { LineaService } from './../service/linea.service';
+import { FamilyService } from '../service/family.service';
 
 @Component({
   selector: 'app-grupo',
@@ -19,6 +20,7 @@ export class GrupoComponent {
   filterValue = '';
   list: List
   linea: any[] = []
+  familia: any[] = []
   selectedCar: number;
   formForm: FormGroup;
   formFormUpdate: FormGroup;
@@ -33,11 +35,11 @@ export class GrupoComponent {
   textSearch: string = ''
   errors: any[] = []
   idGrupo: number
-  constructor(private lineaService: LineaService, private formBuilder: FormBuilder, 
+  constructor(private lineaService: LineaService, private familaService: FamilyService, private formBuilder: FormBuilder, 
     private totastService: NotificationService, private grupoService: GrupoService) {
   }
   ngOnInit(): void {
-    this.getLinea();
+    this.getFamilia();
     this.getGrupo()
     this.inicializarFormulario();
     this.agregarGrupo();
@@ -49,6 +51,7 @@ export class GrupoComponent {
     this.formFormUpdate = this.formBuilder.group({
       des_gru: ['', Validators.required],
       cod_gru: ['', Validators.required],
+      id_familia: [null, Validators.required],
       id_linea: [null, Validators.required]
     });
   }
@@ -144,6 +147,16 @@ export class GrupoComponent {
     this.lineaService.getAll(10000, 0, 1).subscribe({
       next: (res: any) => {
         this.linea =  res?.registros
+      },
+      error: (err: any) => {
+        console.log(err);
+      } 
+    })
+  }
+  getFamilia() {
+    this.familaService.getAll(10000, 0, 1).subscribe({
+      next: (res: any) => {
+        this.familia =  res?.registros
       },
       error: (err: any) => {
         console.log(err);
