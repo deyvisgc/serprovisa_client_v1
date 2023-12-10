@@ -5,4 +5,5 @@ export class UriConstante {
   public static readonly ADMIN_RESOURCE = environment.host + "admin"
   public static readonly FAMILY_RESOURCE = environment.host + "family"
   public static readonly LINEA_RESORCE = environment.host + "linea"
+  public static readonly GRUPO_RESORCE = environment.host + "group"
 }

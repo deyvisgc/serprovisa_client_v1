@@ -35,7 +35,7 @@ export const ROUTES: RouteInfo[] = [
     submenu: []
   },
   {
-    path: '/component/buttons',
+    path: '/system/component/grupo',
     title: 'Grupos',
     icon: 'bi bi-hdd-stack',
     class: '',

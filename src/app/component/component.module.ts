@@ -32,6 +32,10 @@ const routes: Routes = [
     path: "linea",
     component: LineaComponent,
   },
+  {
+    path: "grupo",
+    component: GrupoComponent,
+  },
 ];
 @NgModule({
   imports: [
