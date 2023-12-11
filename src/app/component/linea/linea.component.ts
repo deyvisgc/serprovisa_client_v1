@@ -47,7 +47,7 @@ export class LineaComponent {
     });
     this.formFormUpdate = this.formBuilder.group({
       des_line: ['', Validators.required],
-      cod_lin: ['', Validators.required],
+      cod_line: ['', Validators.required],
       id_familia: [null, Validators.required]
     });
   }
@@ -57,7 +57,7 @@ export class LineaComponent {
   agregarLinea() {
     const nuevaFamilia = this.formBuilder.group({
       des_line: ['', Validators.required],
-      cod_lin: ['', Validators.required],
+      cod_line: ['', Validators.required],
       id_familia: [null, Validators.required]
     });
     this.lineas.push(nuevaFamilia);
@@ -195,7 +195,7 @@ export class LineaComponent {
           this.formFormUpdate.patchValue(
             {
               des_line: res.des_line,
-              cod_lin: res.cod_lin,
+              cod_line: res.cod_line,
               id_familia: res.family_id_fam
             }
           )
@@ -215,11 +215,11 @@ export class LineaComponent {
     const familiaFormGroup = this.lineas.at(index) as FormGroup;
     if(texto.toLowerCase().indexOf(' ') !== -1) {
       codigoLinea = `${codigoLinea}${frase.map((p: any) => p.charAt(0)).join('')}`
-    // Actualiza el valor del control cod_lin
-      familiaFormGroup.get('cod_lin')?.setValue(codigoLinea);
+    // Actualiza el valor del control cod_line
+      familiaFormGroup.get('cod_line')?.setValue(codigoLinea);
     } else {
       codigoLinea = `${codigoLinea}${texto.substring(0,2)}`
-      familiaFormGroup.get('cod_lin')?.setValue(codigoLinea);
+      familiaFormGroup.get('cod_line')?.setValue(codigoLinea);
     }
     familiaFormGroup.get("des_line")?.setValue(texto.toUpperCase())
   }
@@ -254,9 +254,9 @@ export class LineaComponent {
     const frase = texto.split(' ');
     let codigoLinea = "L"
     if(texto.toLowerCase().indexOf(' ') !== -1) {
-      this.formFormUpdate.get('cod_lin')?.setValue(`${codigoLinea}${frase.map((p: any) => p.charAt(0)).join('')}`);
+      this.formFormUpdate.get('cod_line')?.setValue(`${codigoLinea}${frase.map((p: any) => p.charAt(0)).join('')}`);
     } else {
-      this.formFormUpdate.get('cod_lin')?.setValue(`${codigoLinea}${texto.substring(0,2)}`);
+      this.formFormUpdate.get('cod_line')?.setValue(`${codigoLinea}${texto.substring(0,2)}`);
     }
     this.formFormUpdate.get("des_line")?.setValue(texto)
   }

@@ -1,0 +1,136 @@
+<div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+  
+          <h4 class="card-title">Listado de Productos Asignados</h4>
+          <p></p>
+          <button class="btn btn-info btn-group-lg btn-sm" (click)="toggleCollapse()" [attr.aria-expanded]="isCollapsed"
+            aria-controls="collapseExample">Filtros Avanzados <i class="fas fa-search-plus"></i></button>
+          <p></p>
+          <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed" style="border-radius: 1px solid;">
+            <div class="card">
+              <div class="row">
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="inputNombre">Fecha Inicio</label>
+                    <div class="input-group">
+                      <input
+                        class="form-control"
+                        placeholder="yyyy-mm-dd"
+                        name="dp"
+                        [(ngModel)]="filtros.fecha_ini"
+                        ngbDatepicker
+                        #dateIni="ngbDatepicker"
+                      />
+                      <button class="btn btn-outline-secondary bi bi-calendar3" (click)="dateIni.toggle()" type="button"></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="inputNombre">Fecha Fin</label>
+                    <div class="input-group">
+                      <input
+                        class="form-control"
+                        placeholder="yyyy-mm-dd"
+                        name="dp"
+                        [(ngModel)]="filtros.fecha_fin"
+                        (dateSelect)="onSearchDate()"
+                        ngbDatepicker
+                        #dateFin="ngbDatepicker"
+                      />
+                      <button class="btn btn-outline-secondary bi bi-calendar3" (click)="dateFin.toggle()" type="button"></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="custom-dropdown-container">
+                    <div class="form-group">
+                      <label for="inputNombre">Buscar por Familia</label>
+                      <div class="input-group">
+                        <ng-select [items]="familia" (change)="onSearchFamily()" [(ngModel)]="filtros.famila" [style.width.px]="300" bindLabel="des_fam"  bindValue="id_fam"  placeholder="Seleccionar Familia">
+                        </ng-select>
+                      </div>
+                    </div>
+                  </div>
+             
+                </div>
+                <div class="col-md-3">
+                  <div class="custom-dropdown-container">
+                    <div class="form-group">
+                      <label for="inputNombre">Buscar por Linea</label>
+                      <div class="input-group">
+                        <ng-select  [items]="lineaFilters" (change)="onSearchLine()" [(ngModel)]="filtros.linea" [style.width.px]="300" bindLabel="des_line" bindValue="id_line" placeholder="Seleccionar Linea">
+                        </ng-select>
+                      </div>
+                    </div>
+                  </div>
+  
+                </div>
+                <div class="col-md-2" style="margin-top: 25px;">
+                <button class="btn btn-outline-danger btn-group-lg btn-sm" aria-controls="collapseExample" (click)="clearFilter()">Limpiar <i class="fas fa-eraser"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between">
+            <div class="form-group">
+              <input type="text" class="form-control" [(ngModel)]="textSearch" id="name" placeholder="Buscar" />
+            </div>
+            <!-- <button class="btn btn-info btn-group-lg btn-sm" (click)="open(content)">Nuevo <i
+                class="fas fa-plus"></i></button> -->
+          </div>
+          <div class="table-responsive">
+            <table class="table align-middle text-nowrap">
+              <thead>
+                <tr>
+                  <th class="text-dark font-medium fs-4">Familia</th>
+                  <th class="text-dark font-medium fs-4">Linea</th>
+                  <th class="text-dark font-medium fs-4">Grupo</th>
+                  <th class="text-dark font-medium fs-4">Codigo Producto</th>
+                  <th class="text-dark font-medium fs-4">Nombre Producto</th>
+                  <th class="text-dark font-medium fs-4">Detalle Producto</th>
+                  <th class="text-dark font-medium fs-4">Responsable</th>
+                  <th class="text-dark font-medium fs-4">Fecha Registro</th>
+                  <th class="text-dark font-medium fs-4">Opciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngIf=" list?.registros | search : textSearch as result">
+                  <!-- <tr  *ngFor="let items of result | search:textSearch | slice : (currentPage - 1) * totalPages : (currentPage - 1) * totalPages + totalPages; let i = index"> -->
+  
+                  <tr *ngFor="let item of result | search:textSearch; let i = index">
+                    <!-- <td>
+                      {{i + 1}}
+                    </td> -->
+                    <td class="fs-4">{{item.cod_fam}} - {{item.des_fam}}</td>
+                    <td class="fs-4">{{item.cod_line}} - {{item.des_line}}</td>
+                    <td class="fs-4">{{item.cod_gru}} - {{item.des_gru}}</td>
+                    <td  class="fs-4">{{item.cod_product}}</td>
+                    <td class="fs-4">{{item.name_product}}</td>
+                      <td class="fs-4">{{item.des_product}}</td>
+                    <td class="fs-4">{{item.us_full_name}} </td>
+                    <td class="fs-4">{{item.fech_regis | date:"shortDate"}}</td>
+                    <td>
+                      <button type="button" ngbTooltip="Actualizar Grupo" (click)="edit(null, item.id_prod)"
+                        class="btn btn-outline-success w-sm btn-sm" style="margin-left: 5px">
+                        <span><i class="fas fa-edit"></i></span>
+                      </button>
+                      <button type="button" ngbTooltip="Eliminar Grupo" (click)="eliminar(item.id_prod)" class="btn w-sm btn-sm btn-outline-danger"
+                        style="margin-left: 5px">
+                        <span><i class="fas fa-trash"></i></span>
+                      </button>
+                    </td>
+                  </tr>
+  
+                </ng-container>
+              </tbody>
+            </table>
+            <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [totalRegistros]="totalRegistros"
+              [totalRegistrosPage]="totalRegistroPage" (pageChange)="onPageChange($event)"></app-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

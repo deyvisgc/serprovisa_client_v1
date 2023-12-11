@@ -9,14 +9,11 @@ import { GrupoService } from '../service/grupo.service';
 import { LineaService } from './../service/linea.service';
 import { FamilyService } from '../service/family.service';
 import  * as dayjs from "dayjs"
-import { FiltrosGrupo } from 'src/app/core/interface/filtros.request';
-import { NgbDateParserFormatter, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule } from '@angular/forms';
-import { JsonPipe } from '@angular/common';
-import { retry } from 'rxjs';
+import { Filtros } from 'src/app/core/interface/filtros.request';
 import { TokenService } from 'src/app/util/token.service';
 import { ProductoRequest } from 'src/app/core/interface/producto.request';
 import { ProductoService } from '../service/producto.service';
+import { Router } from '@angular/router';
 dayjs().format()
 @Component({
   selector: 'app-grupo',
@@ -56,7 +53,7 @@ export class GrupoComponent {
   idFamilia = 0
   codigoConjunto: string = ""
   totalProducto: number = 0
-  filtros: FiltrosGrupo = {
+  filtros: Filtros = {
     fecha_ini: {
       year: dayjs().subtract(1, 'month').year(),
       month: dayjs().subtract(1, 'month').month() + 1, // Los meses en NgbDateStruct van de 1 a 12
@@ -78,7 +75,8 @@ export class GrupoComponent {
     private totastService: NotificationService,
     private grupoService: GrupoService,
     private tokenService: TokenService,
-    private productoService: ProductoService
+    private productoService: ProductoService,
+    private router: Router
   ) {}
   ngOnInit(): void {
     this.getFamilia();
@@ -434,30 +432,36 @@ export class GrupoComponent {
   }
   guardarProducto () {
     this.submitted = true;
-    if (this.formFormProducto.invalid) {
-      return;
+    if (this.productos.length > 0) {
+      if (this.formFormProducto.invalid) {
+        return;
+      }
+      const producto = this.formFormProducto.value.productos as ProductoRequest[];
+      
+      this.productoService.register(producto).subscribe({
+        next: (res: any) => {
+          this.totastService.success(res.message);
+          this.formFormProducto.reset();
+          this.modalService.dismissAll();
+          this.errors = [];
+        },
+        error: (err: any) => {
+          if (err.status !== 400) {
+            this.totastService.error(err.error.error);
+          } else {
+            this.errors = err.error.message;
+          }
+        },
+        complete: () => {
+          this.submitted = false;
+          this.getGrupo();
+          this.productos.clear()
+        },
+      });
+    } {
+      this.totastService.error("Minimo un producto ha registrar")
     }
-    const producto = this.formFormProducto.value.productos as ProductoRequest[];
-    this.productoService.register(producto).subscribe({
-      next: (res: any) => {
-        this.totastService.success(res.message);
-        this.formFormProducto.reset();
-        this.modalService.dismissAll();
-        this.errors = [];
-      },
-      error: (err: any) => {
-        if (err.status !== 400) {
-          this.totastService.error(err.error.error);
-        } else {
-          this.errors = err.error.message;
-        }
-      },
-      complete: () => {
-        this.submitted = false;
-        this.getGrupo();
-        this.productos.clear()
-      },
-    });
+    
   }
   agregarProducto (model: any, item: any) {
     this.codigoConjunto = item.cod_gru_final
@@ -466,6 +470,6 @@ export class GrupoComponent {
     this.modalService.open(model, { size: 'xl' });
   }
   verProducto (model: any, id: number) {
-    this.modalService.open(model, { size: 'xl' });
+    this.router.navigate(['system/component/asignar-product/', id]);
   }
 }

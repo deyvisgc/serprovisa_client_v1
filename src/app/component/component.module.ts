@@ -22,6 +22,7 @@ import { LineaComponent } from './linea/linea.component';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbCalendar, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { JsonPipe } from '@angular/common';
+import { ProductoComponent } from './producto/producto.component';
 const routes: Routes = [
   {
     path: "admin",
@@ -38,6 +39,14 @@ const routes: Routes = [
   {
     path: "grupo",
     component: GrupoComponent,
+  },
+  {
+    path: "asignar-product",
+    component: ProductoComponent,
+  },
+  {
+    path: "asignar-product/:id",
+    component: ProductoComponent,
   },
 ];
 @NgModule({
@@ -61,7 +70,7 @@ const routes: Routes = [
     CardsComponent,
     TableComponent
   ],
-  declarations: [AdminComponent, FamilyComponent, LineaComponent, GrupoComponent],
+  declarations: [AdminComponent, FamilyComponent, LineaComponent, GrupoComponent, ProductoComponent],
 
 })
 

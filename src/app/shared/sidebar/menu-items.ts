@@ -43,7 +43,7 @@ export const ROUTES: RouteInfo[] = [
     submenu: []
   },
   {
-    path: '/component/card',
+    path: '/system/component/asignar-product',
     title: 'Asignacion Producto',
     icon: 'bi bi-card-text',
     class: '',

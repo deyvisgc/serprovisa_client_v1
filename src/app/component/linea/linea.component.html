@@ -32,7 +32,7 @@
                     {{i + 1}}
                  </td>
                   <td>
-                    {{item.cod_lin}}
+                    {{item.cod_line}}
                   </td>
                   <td class="fs-4">{{item.des_line}}</td>
                   <td class="fs-4">{{item.cod_fam}} - {{item.des_fam}}</td>
@@ -91,10 +91,10 @@
                           <div class="col-md-3">
                             <div class="form-group">
                               <label for="inputCodigo">Codigo Linea</label>
-                              <input type="text" class="form-control" formControlName="cod_lin" id="inputCodigo"
-                                [ngClass]="{ 'is-invalid': submitted && lineaFormGroup.get('cod_lin')?.invalid }" />
-                              <div *ngIf="submitted && lineaFormGroup.get('cod_lin')?.invalid" class="invalid-feedback">
-                                <div *ngIf="lineaFormGroup.get('cod_lin')?.hasError('required')">Código es requerido</div>
+                              <input type="text" class="form-control" formControlName="cod_line" id="inputCodigo"
+                                [ngClass]="{ 'is-invalid': submitted && lineaFormGroup.get('cod_line')?.invalid }" />
+                              <div *ngIf="submitted && lineaFormGroup.get('cod_line')?.invalid" class="invalid-feedback">
+                                <div *ngIf="lineaFormGroup.get('cod_line')?.hasError('required')">Código es requerido</div>
                               </div>
                             </div>
                           </div>
@@ -155,10 +155,10 @@
             <div class="col-md-4">
               <div class="form-group">
                 <label for="inputCodigo">Codigo Linea</label>
-                <input type="text" class="form-control" readonly formControlName="cod_lin" id="inputCodigo"
-                  [ngClass]="{ 'is-invalid': submitted && f.get('cod_lin')?.invalid }" />
-                <div *ngIf="submitted && f.get('cod_lin')?.invalid" class="invalid-feedback">
-                  <div *ngIf="f.get('cod_lin')?.hasError('required')">Código es requerido</div>
+                <input type="text" class="form-control" readonly formControlName="cod_line" id="inputCodigo"
+                  [ngClass]="{ 'is-invalid': submitted && f.get('cod_line')?.invalid }" />
+                <div *ngIf="submitted && f.get('cod_line')?.invalid" class="invalid-feedback">
+                  <div *ngIf="f.get('cod_line')?.hasError('required')">Código es requerido</div>
                 </div>
               </div>
             </div>
