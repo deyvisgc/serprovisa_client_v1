@@ -1,6 +1,6 @@
 import { Component, TemplateRef, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ModalDismissReasons, NgbCalendar, NgbDate, NgbDateStruct, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalDismissReasons, NgbCalendar, NgbDate, NgbDateStruct, NgbModal, NgbModalConfig, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { List } from 'src/app/core/interface/list.';
 import { NotificationService } from 'src/app/core/service/notification.service';
 import Swal from 'sweetalert2';
@@ -24,8 +24,6 @@ export class GrupoComponent {
   private modalService = inject(NgbModal);
   today = inject(NgbCalendar).getToday();
 	model: NgbDateStruct;
-
-
   closeResult = '';
   filterValue = '';
   list: List;
@@ -76,8 +74,12 @@ export class GrupoComponent {
     private grupoService: GrupoService,
     private tokenService: TokenService,
     private productoService: ProductoService,
-    private router: Router
-  ) {}
+    private router: Router,
+    config: NgbModalConfig
+  ) {
+    config.backdrop = 'static';
+		config.keyboard = false;
+  }
   ngOnInit(): void {
     this.getFamilia();
     this.getGrupo();
@@ -177,7 +179,10 @@ export class GrupoComponent {
     });
   }
   open(content: TemplateRef<any>) {
-    this.modalService.open(content, { size: 'xl' }).result.then(
+    const opcionesModal: NgbModalOptions = {
+      size: 'xl'
+    };
+    this.modalService.open(content, opcionesModal).result.then(
       (result) => {
         this.closeResult = `Closed with: ${result}`;
       },
@@ -186,11 +191,15 @@ export class GrupoComponent {
       }
     );
   }
-  private getDismissReason(reason: any): string {
+  getDismissReason(reason: any): string {
     switch (reason) {
       case ModalDismissReasons.ESC:
+        this.productos.clear()
+        this.modalService.dismissAll();
         return 'by pressing ESC';
       case ModalDismissReasons.BACKDROP_CLICK:
+        this.productos.clear()
+        this.modalService.dismissAll();
         return 'by clicking on a backdrop';
       default:
         return `with: ${reason}`;

@@ -146,7 +146,7 @@
 <ng-template #content let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Crear Linea</h4>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="getDismissReason('Cross click')"></button>
   </div>
   <div class="modal-body">
     <div class="alert alert-danger" *ngIf="errors.length > 0" role="alert">
@@ -295,12 +295,12 @@
 
 </ng-template>
 
-<ng-template #modalAgregarProducto let-modal>
+<ng-template #modalAgregarProducto let-modal >
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Agregar Producto</h4>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="getDismissReason(0)"></button>
   </div>
-  <div class="modal-body">
+  <div class="modal-body" tabindex="-1" role="dialog" >
     <div class="alert alert-danger" *ngIf="errors.length > 0" role="alert">
       <span *ngFor="let err of errors; let last = last">
         <span [innerHTML]="'*' + err.mensaje + (last ? '' : '<br>')"></span>
