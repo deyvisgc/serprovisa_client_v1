@@ -23,16 +23,20 @@ export class GrupoService {
     .put<any>(`${UriConstante.GRUPO_RESORCE}/${id}` , linea)
   }
   getAll(limit: number, offset: number, page: number, filtros: Filtros):Observable<any>  {
-    const dayIni = filtros.fecha_ini.day < 10 ? `0${filtros.fecha_ini.day}` : filtros.fecha_ini.day ;
-    const dayFin = filtros.fecha_fin.day < 10 ? `0${filtros.fecha_fin.day}` : filtros.fecha_fin.day;
-    console.log(dayIni)
-    console.log(dayFin)
+    let fecha_ini = ""
+    let fecha_fin = ""
+    if (filtros.fecha_ini.day !== 0 && filtros.fecha_ini.year !== 0 && filtros.fecha_ini.month !== 0) {
+      const dayIni = filtros.fecha_ini.day < 10 ? `0${filtros.fecha_ini.day}` : filtros.fecha_ini.day ;
+      const dayFin = filtros.fecha_fin.day < 10 ? `0${filtros.fecha_fin.day}` : filtros.fecha_fin.day;
+      fecha_ini =  `${filtros.fecha_ini.year}-${filtros.fecha_ini.month}-${dayIni}`
+      fecha_fin =  `${filtros.fecha_fin.year}-${filtros.fecha_fin.month}-${dayFin}`
+    }
     const params = new HttpParams()
     .append("limit", limit)
     .append("offset", offset)
     .append("page", page)
-    .append("fecha_ini", `${filtros.fecha_ini.year}-${filtros.fecha_ini.month}-${dayIni}`)
-    .append("fecha_fin", `${filtros.fecha_fin.year}-${filtros.fecha_fin.month}-${dayFin}`)
+    .append("fecha_ini", fecha_ini)
+    .append("fecha_fin", fecha_fin)
     .append("familia", filtros.famila)
     .append("linea", filtros.linea);
     return this.http.get(UriConstante.GRUPO_RESORCE, {params: params});

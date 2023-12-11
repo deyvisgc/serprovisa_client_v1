@@ -193,10 +193,6 @@ export class GrupoComponent {
   }
   getDismissReason(reason: any): string {
     switch (reason) {
-      case ModalDismissReasons.ESC:
-        this.productos.clear()
-        this.modalService.dismissAll();
-        return 'by pressing ESC';
       case ModalDismissReasons.BACKDROP_CLICK:
         this.productos.clear()
         this.modalService.dismissAll();

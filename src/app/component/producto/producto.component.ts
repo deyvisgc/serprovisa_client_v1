@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbCalendar, NgbDateStruct, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as dayjs from 'dayjs';
-import { FiltrosProducto } from 'src/app/core/interface/filtros.request';
+import { Filtros, FiltrosProducto } from 'src/app/core/interface/filtros.request';
 import { List } from 'src/app/core/interface/list.';
 import { LineaService } from '../service/linea.service';
 import { FamilyService } from '../service/family.service';
@@ -10,6 +10,7 @@ import { NotificationService } from 'src/app/core/service/notification.service';
 import { GrupoService } from '../service/grupo.service';
 import { ProductoService } from '../service/producto.service';
 import { ActivatedRoute } from '@angular/router';
+import { AdminService } from '../service/admin.service';
 
 @Component({
   selector: 'app-producto',
@@ -28,6 +29,8 @@ export class ProductoComponent implements OnInit {
   linea: any[] = [];
   lineaFilters: any[] = [];
   familia: any[] = [];
+  grupo: any[] = [];
+  responsables: any[] = [];
   selectedCar: number;
   formForm: FormGroup;
   formFormUpdate: FormGroup;
@@ -65,6 +68,12 @@ export class ProductoComponent implements OnInit {
     grupo: "",
     user: ""
   }
+  filtrosGrupo: Filtros = {
+    fecha_ini: { year: 0, month: 0, day: 0},
+    fecha_fin: { year: 0, month: 0, day: 0},
+    famila: "",
+    linea: "",
+  }
   constructor(
     private lineaService: LineaService,
     private familaService: FamilyService,
@@ -72,6 +81,7 @@ export class ProductoComponent implements OnInit {
     private totastService: NotificationService,
     private grupoService: GrupoService,
     private productoService: ProductoService,
+    private adminService: AdminService,
     private route: ActivatedRoute
   ) {}
   ngOnInit(): void {
@@ -83,7 +93,11 @@ export class ProductoComponent implements OnInit {
         this.filtros.fecha_ini = { year: 0, month: 0, day: 0}
         this.filtros.fecha_fin = { year: 0, month: 0, day: 0}
       }
+      this.getProducto()
+      this.getLinea()
+      this.getFamilia()
       this.getGrupo()
+      this.getResponsable()
     });
   }
   toggleCollapse() {
@@ -114,6 +128,20 @@ export class ProductoComponent implements OnInit {
     }
     this.getList(this.limit, this.offset, this.currentPage)
   }
+  onSearchGrupo () {
+    if (!this.filtros.grupo) {
+      this.totastService.warning("Debe seleccionar un grupo");
+      return
+    }
+    this.getList(this.limit, this.offset, this.currentPage)
+  }
+  onSearchResponsable () {
+    if (!this.filtros.user) {
+      this.totastService.warning("Debe seleccionar un responsable");
+      return
+    }
+    this.getList(this.limit, this.offset, this.currentPage)
+  }
   clearFilter() {
     this.filtros = {
       famila: "",
@@ -133,7 +161,7 @@ export class ProductoComponent implements OnInit {
     }
     this.getList(this.limit, this.offset, this.currentPage)
   }
-  private getGrupo() {
+  private getProducto() {
     this.getList(this.limit, this.offset, this.currentPage);
   }
   getList(limit: number, offset: number, page: number) {
@@ -149,6 +177,46 @@ export class ProductoComponent implements OnInit {
           this.totalRegistroPage = res.offset + this.list?.registros.length;
         }
         this.totalPages = Math.ceil(this.totalRegistros / limit);
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
+  }
+  getLinea() {
+    this.lineaService.getAll(10000, 0, 1).subscribe({
+      next: (res: any) => {
+        this.linea = res?.registros;
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
+  }
+  getFamilia() {
+    this.familaService.getAll(10000, 0, 1).subscribe({
+      next: (res: any) => {
+        this.familia = res?.registros;
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
+  }
+  getGrupo() {
+    this.grupoService.getAll(10000, 0, 1, this.filtrosGrupo).subscribe({
+      next: (res: any) => {
+        this.grupo = res?.registros;
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
+  }
+  getResponsable() {
+    this.adminService.getAll(10000, 0, 1).subscribe({
+      next: (res: any) => {
+        this.responsables = res?.registros.filter( (f: any) => f.ro_name !== "Super Admin");
       },
       error: (err: any) => {
         console.log(err);

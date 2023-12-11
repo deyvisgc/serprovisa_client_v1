@@ -5,8 +5,11 @@
   
           <h4 class="card-title">Listado de Productos Asignados</h4>
           <p></p>
-          <button class="btn btn-info btn-group-lg btn-sm" (click)="toggleCollapse()" [attr.aria-expanded]="isCollapsed"
-            aria-controls="collapseExample">Filtros Avanzados <i class="fas fa-search-plus"></i></button>
+          <div class="d-flex justify-content-between">
+            <button class="btn btn-info btn-group-lg btn-sm" (click)="toggleCollapse()" [attr.aria-expanded]="isCollapsed"
+            aria-controls="collapseExample">Filtros de Busquedas <i class="fas fa-search-plus"></i></button>
+             <button class="btn btn-outline-danger btn-group-lg btn-sm" aria-controls="collapseExample" *ngIf="!isCollapsed" (click)="clearFilter()">Limpiar Filtros<i class="fas fa-eraser"></i></button>
+          </div>
           <p></p>
           <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed" style="border-radius: 1px solid;">
             <div class="card">
@@ -44,36 +47,55 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                   <div class="custom-dropdown-container">
                     <div class="form-group">
-                      <label for="inputNombre">Buscar por Familia</label>
+                      <label for="inputNombre">Familia</label>
                       <div class="input-group">
-                        <ng-select [items]="familia" (change)="onSearchFamily()" [(ngModel)]="filtros.famila" [style.width.px]="300" bindLabel="des_fam"  bindValue="id_fam"  placeholder="Seleccionar Familia">
+                        <ng-select [items]="familia" (change)="onSearchFamily()" [(ngModel)]="filtros.famila" [style.width.px]="300" bindLabel="des_fam"  bindValue="id_fam" >
                         </ng-select>
                       </div>
                     </div>
                   </div>
              
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                   <div class="custom-dropdown-container">
                     <div class="form-group">
-                      <label for="inputNombre">Buscar por Linea</label>
+                      <label for="inputNombre">Linea</label>
                       <div class="input-group">
-                        <ng-select  [items]="lineaFilters" (change)="onSearchLine()" [(ngModel)]="filtros.linea" [style.width.px]="300" bindLabel="des_line" bindValue="id_line" placeholder="Seleccionar Linea">
+                        <ng-select  [items]="linea" (change)="onSearchLine()" [(ngModel)]="filtros.linea" [style.width.px]="200" bindLabel="des_line" bindValue="id_line" >
                         </ng-select>
                       </div>
                     </div>
                   </div>
-  
                 </div>
-                <div class="col-md-2" style="margin-top: 25px;">
-                <button class="btn btn-outline-danger btn-group-lg btn-sm" aria-controls="collapseExample" (click)="clearFilter()">Limpiar <i class="fas fa-eraser"></i></button>
+                <div class="col-md-2">
+                  <div class="custom-dropdown-container">
+                    <div class="form-group">
+                      <label for="inputNombre">Grupo</label>
+                      <div class="input-group">
+                        <ng-select  [items]="grupo" (change)="onSearchGrupo()" [(ngModel)]="filtros.grupo" [style.width.px]="200" bindLabel="des_gru" bindValue="id_grou" >
+                        </ng-select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="custom-dropdown-container">
+                    <div class="form-group">
+                      <label for="inputNombre">Responsables</label>
+                      <div class="input-group">
+                        <ng-select  [items]="responsables" (change)="onSearchResponsable()" [(ngModel)]="filtros.user" [style.width.px]="300" bindLabel="us_full_name" bindValue="id_user" >
+                        </ng-select>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          <p></p>
           <div class="d-flex justify-content-between">
             <div class="form-group">
               <input type="text" class="form-control" [(ngModel)]="textSearch" id="name" placeholder="Buscar" />
