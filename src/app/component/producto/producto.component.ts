@@ -1,6 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { NgbCalendar, NgbDateStruct, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit, TemplateRef, inject } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ModalDismissReasons, NgbCalendar, NgbDateStruct, NgbModal, NgbModalConfig, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import * as dayjs from 'dayjs';
 import { Filtros, FiltrosProducto } from 'src/app/core/interface/filtros.request';
 import { List } from 'src/app/core/interface/list.';
@@ -11,6 +11,9 @@ import { GrupoService } from '../service/grupo.service';
 import { ProductoService } from '../service/producto.service';
 import { ActivatedRoute } from '@angular/router';
 import { AdminService } from '../service/admin.service';
+import { TokenService } from 'src/app/util/token.service';
+import { ProductoRequest } from 'src/app/core/interface/producto.request';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-producto',
@@ -26,14 +29,14 @@ export class ProductoComponent implements OnInit {
   closeResult = '';
   filterValue = '';
   list: List;
+  lineaFilter: any[] = [];
   linea: any[] = [];
-  lineaFilters: any[] = [];
   familia: any[] = [];
   grupo: any[] = [];
+  lineaFilters: any[] = [];
+  familiaFilters: any[] = [];
+  grupoFilters: any[] = [];
   responsables: any[] = [];
-  selectedCar: number;
-  formForm: FormGroup;
-  formFormUpdate: FormGroup;
   formFormProducto: FormGroup;
   submitted = false;
   isLoading = false;
@@ -52,6 +55,9 @@ export class ProductoComponent implements OnInit {
   idFamilia = 0
   codigoConjunto: string = ""
   totalProducto: number = 0
+  totalProductoTemp: number = 0
+  codGrupoTemp: string = ""
+  codigoProducts: any[] = [] 
   filtros: FiltrosProducto = {
     fecha_ini: {
       year: dayjs().subtract(1, 'month').year(),
@@ -82,8 +88,14 @@ export class ProductoComponent implements OnInit {
     private grupoService: GrupoService,
     private productoService: ProductoService,
     private adminService: AdminService,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private tokenService: TokenService,
+    config: NgbModalConfig
+  ) {
+    config.backdrop = 'static';
+		config.keyboard = false;
+    this.inicializarFormulario()
+  }
   ngOnInit(): void {
 
     this.route.params.subscribe(params => {
@@ -98,6 +110,35 @@ export class ProductoComponent implements OnInit {
       this.getFamilia()
       this.getGrupo()
       this.getResponsable()
+    });
+  }
+  open(content: TemplateRef<any>) {
+    const opcionesModal: NgbModalOptions = {
+      size: 'xl'
+    };
+    this.modalService.open(content, opcionesModal).result.then(
+      (result) => {
+        this.closeResult = `Closed with: ${result}`;
+      },
+      (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+      }
+    );
+  }
+  getDismissReason(reason: any): string {
+    switch (reason) {
+      case ModalDismissReasons.BACKDROP_CLICK:
+        console.log("entro aqui")
+        this.productos.clear()
+        this.modalService.dismissAll();
+        return 'by clicking on a backdrop';
+      default:
+        return `with: ${reason}`;
+    }
+  }
+  inicializarFormulario() {
+    this.formFormProducto = this.formBuilder.group({
+      productos: this.formBuilder.array([]),
     });
   }
   toggleCollapse() {
@@ -186,7 +227,7 @@ export class ProductoComponent implements OnInit {
   getLinea() {
     this.lineaService.getAll(10000, 0, 1).subscribe({
       next: (res: any) => {
-        this.linea = res?.registros;
+        this.lineaFilter = res?.registros;
       },
       error: (err: any) => {
         console.log(err);
@@ -196,6 +237,7 @@ export class ProductoComponent implements OnInit {
   getFamilia() {
     this.familaService.getAll(10000, 0, 1).subscribe({
       next: (res: any) => {
+        this.familiaFilters = res?.registros;
         this.familia = res?.registros;
       },
       error: (err: any) => {
@@ -206,7 +248,7 @@ export class ProductoComponent implements OnInit {
   getGrupo() {
     this.grupoService.getAll(10000, 0, 1, this.filtrosGrupo).subscribe({
       next: (res: any) => {
-        this.grupo = res?.registros;
+        this.grupoFilters = res?.registros;
       },
       error: (err: any) => {
         console.log(err);
@@ -229,4 +271,117 @@ export class ProductoComponent implements OnInit {
     this.currentPage = event.page;
     this.getList(event.limit, event.offset, this.currentPage)
   }
+  guardar () {
+    this.submitted = true;
+    if (this.productos.length > 0) {
+      if (this.formFormProducto.invalid) {
+        return;
+      }
+      const producto = this.formFormProducto.value.productos as ProductoRequest[];
+      
+      this.productoService.registerMaivo(producto).subscribe({
+        next: (res: any) => {
+          this.totastService.success(res.message);
+          this.formFormProducto.reset();
+          this.modalService.dismissAll();
+          this.errors = [];
+          this.codigoProducts = []
+        },
+        error: (err: any) => {
+          if (err.status !== 400) {
+            this.totastService.error(err.error.error);
+          } else {
+            this.errors = err.error.message;
+          }
+        },
+        complete: () => {
+          this.submitted = false;
+          this.getProducto();
+          this.productos.clear()
+        },
+      });
+    } {
+      this.totastService.error("Minimo un producto ha registrar")
+    }
+    
+  }
+  get productos() {
+    return this.formFormProducto.get('productos') as FormArray;
+  }
+  addProducto() {
+    if (this.productos.length > 2) {
+      this.totastService.warning("Solo se permite asignar 3 productos")
+      return
+    }
+    const nuevoProducto = this.formBuilder.group({
+      familia: [null , Validators.required],
+      line: [null, Validators.required],
+      grupo: [null , Validators.required],
+      cod_product: [null , Validators.required],
+      name_product: ['', Validators.required],
+      des_product: [null, Validators.required],
+      id_grupo: [null, Validators.required],
+      id_user: [this.tokenService.decodeToken().id, Validators.required],
+    });
+    this.productos.push(nuevoProducto);
+  }
+  eliminarProducto(index: number) {
+    this.productos.removeAt(index);
+  }
+  getLineByIdFamilia(event: any) {
+    this.lineaService.getByIdFamilia(event.id_fam).subscribe({
+      next: (res: any) => {
+        this.linea = res;
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
+  }
+  getGrupoByIdLinea(event: any) {
+    this.grupoService.getByIdLinea(event.id_line).subscribe({
+      next: (res: any) => {
+        this.grupo = res;
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
+  }
+  addCodigoProducto (event: any, index: number) {
+    let codProducto = ""
+    const productoFormGroup = this.productos.at(index) as FormGroup;
+    let total_product =  0
+    if (index === 0 ) {
+      total_product = event.total_product
+      total_product += 1
+    } else {
+      const codigo = this.codigoProducts.find((cod: any) => cod === event.cod_gru_final);
+      
+      console.log(this.codigoProducts)
+      if (codigo) {
+        const productosFiltrados = this.productos.controls.find((productoFormGroup: any) => productoFormGroup.value.cod_product !== null && productoFormGroup.value.cod_product.startsWith(codigo));
+        if (productosFiltrados) {
+          const codigoSinNumeros = productosFiltrados.value.cod_product.split("-")
+          total_product = parseInt(codigoSinNumeros[3], 10) + 1
+        }
+      } else {
+        total_product = event.total_product
+        total_product += 1
+      }
+    }
+
+    if(total_product < 10) {
+      codProducto = `00${total_product}`
+    } else if (total_product < 99 && total_product > 9) {
+      codProducto = `0${total_product}`
+    } else {
+      codProducto = `${total_product}`
+    }
+    this.totalProductoTemp = total_product
+    productoFormGroup.get('cod_product')?.setValue(`${event.cod_gru_final}-${codProducto}`);
+    productoFormGroup.get('id_grupo')?.setValue(event.id_grou);
+    this.codigoProducts.push(event.cod_gru_final)
+  }
+
 }

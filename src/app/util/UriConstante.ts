@@ -7,5 +7,6 @@ export class UriConstante {
   public static readonly LINEA_RESORCE = environment.host + "linea"
   public static readonly LINEA_FAMILIA_RESORCE = environment.host + "linea/linea-familia"
   public static readonly GRUPO_RESORCE = environment.host + "group"
+  public static readonly GRUPO_LINEA_RESORCE = environment.host + "group/grupo-linea"
   public static readonly PRODUCTO_RESORCE = environment.host + "products"
 }

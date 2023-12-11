@@ -41,6 +41,10 @@ export class ProductoService {
     return this.http
     .post<any>(UriConstante.PRODUCTO_RESORCE, product)
   }
+  registerMaivo(product: ProductoRequest[]): Observable<Response> {
+    return this.http
+    .post<any>( `${UriConstante.PRODUCTO_RESORCE}/masivo` , product)
+  }
   update(id:number, product: ProductoRequest): Observable<Response> {
     return this.http
     .put<any>(`${UriConstante.PRODUCTO_RESORCE}/${id}` , product)

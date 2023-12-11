@@ -47,4 +47,7 @@ export class GrupoService {
   delete(id:number) {
     return this.http.delete<any>(UriConstante.GRUPO_RESORCE +   `/${id}` )
   }
+  getByIdLinea(id: number) : Observable<any> {
+    return this.http.get<any>(UriConstante.GRUPO_LINEA_RESORCE + `/${id}` )
+  }
 }
