@@ -195,6 +195,7 @@ export class GrupoComponent {
     switch (reason) {
       case ModalDismissReasons.BACKDROP_CLICK:
         this.productos.clear()
+        this.grupos.clear()
         this.modalService.dismissAll();
         return 'by clicking on a backdrop';
       default:

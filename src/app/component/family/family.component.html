@@ -80,7 +80,7 @@
                           <div class="col-md-5">
                             <div class="form-group">
                               <label for="inputNombre">Nombre Familia</label>
-                              <input type="text" class="form-control" formControlName="descripcion_familia" id="inputNombre"
+                              <input type="text" class="form-control text-uppercase" formControlName="descripcion_familia" id="inputNombre"
                                 [ngClass]="{ 'is-invalid': submitted && familiaFormGroup.get('descripcion_familia')?.invalid }" (blur)="addCodigo($event, i)" />
                               <div *ngIf="submitted && familiaFormGroup.get('descripcion_familia')?.invalid" class="invalid-feedback">
                                 <div *ngIf="familiaFormGroup.get('descripcion_familia')?.hasError('required')">Nombre es requerido</div>
@@ -90,7 +90,7 @@
                           <div class="col-md-5">
                             <div class="form-group">
                               <label for="inputCodigo">Codigo Familia</label>
-                              <input type="text" class="form-control" formControlName="codigo_familia" id="inputCodigo"
+                              <input type="text" class="form-control text-uppercase" formControlName="codigo_familia" id="inputCodigo"
                                 [ngClass]="{ 'is-invalid': submitted && familiaFormGroup.get('codigo_familia')?.invalid }" />
                               <div *ngIf="submitted && familiaFormGroup.get('codigo_familia')?.invalid" class="invalid-feedback">
                                 <div *ngIf="familiaFormGroup.get('codigo_familia')?.hasError('required')">Código es requerido</div>
@@ -131,7 +131,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="inputNombre">Nombre Familia</label>
-                <input type="text" class="form-control" formControlName="descripcion_familia" id="inputNombre" (blur)="addCodigoUpdate($event)"
+                <input type="text" class="form-control text-uppercase" formControlName="descripcion_familia" id="inputNombre" (blur)="addCodigoUpdate($event)"
                   [ngClass]="{ 'is-invalid': submitted && f.get('descripcion_familia')?.invalid }" />
                 <div *ngIf="submitted && f.get('descripcion_familia')?.invalid" class="invalid-feedback">
                   <div *ngIf="f.get('descripcion_familia')?.hasError('required')">Nombre es requerido</div>
@@ -141,7 +141,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="inputCodigo">Codigo Familia</label>
-                <input type="text" class="form-control" readonly formControlName="codigo_familia" id="inputCodigo"
+                <input type="text" class="form-control text-uppercase" readonly formControlName="codigo_familia" id="inputCodigo"
                   [ngClass]="{ 'is-invalid': submitted && f.get('codigo_familia')?.invalid }" />
                 <div *ngIf="submitted && f.get('codigo_familia')?.invalid" class="invalid-feedback">
                   <div *ngIf="f.get('codigo_familia')?.hasError('required')">Código es requerido</div>
