@@ -14,6 +14,9 @@ import { NgbDateParserFormatter, NgbDatepickerModule } from '@ng-bootstrap/ng-bo
 import { FormsModule } from '@angular/forms';
 import { JsonPipe } from '@angular/common';
 import { retry } from 'rxjs';
+import { TokenService } from 'src/app/util/token.service';
+import { ProductoRequest } from 'src/app/core/interface/producto.request';
+import { ProductoService } from '../service/producto.service';
 dayjs().format()
 @Component({
   selector: 'app-grupo',
@@ -35,6 +38,7 @@ export class GrupoComponent {
   selectedCar: number;
   formForm: FormGroup;
   formFormUpdate: FormGroup;
+  formFormProducto: FormGroup;
   submitted = false;
   isLoading = false;
   totalRegistros = 0;
@@ -46,7 +50,12 @@ export class GrupoComponent {
   textSearch: string = '';
   errors: any[] = [];
   idGrupo: number;
+  idGrupoProducto: number = 0;
   isCollapsed = true;
+  idLinea = 0
+  idFamilia = 0
+  codigoConjunto: string = ""
+  totalProducto: number = 0
   filtros: FiltrosGrupo = {
     fecha_ini: {
       year: dayjs().subtract(1, 'month').year(),
@@ -67,7 +76,9 @@ export class GrupoComponent {
     private familaService: FamilyService,
     private formBuilder: FormBuilder,
     private totastService: NotificationService,
-    private grupoService: GrupoService
+    private grupoService: GrupoService,
+    private tokenService: TokenService,
+    private productoService: ProductoService
   ) {}
   ngOnInit(): void {
     this.getFamilia();
@@ -75,20 +86,27 @@ export class GrupoComponent {
     this.getLinea();
     this.inicializarFormulario();
     this.agregarGrupo();
+    //this.addProducto();
   }
   inicializarFormulario() {
     this.formForm = this.formBuilder.group({
       grupos: this.formBuilder.array([]),
     });
+    this.formFormProducto = this.formBuilder.group({
+      productos: this.formBuilder.array([]),
+    });
     this.formFormUpdate = this.formBuilder.group({
       des_gru: ['', Validators.required],
       cod_gru: ['', Validators.required],
       id_familia: [null, Validators.required],
-      id_linea: [null, Validators.required],
+      id_linea: [null, Validators.required]
     });
   }
   get grupos() {
     return this.formForm.get('grupos') as FormArray;
+  }
+  get productos() {
+    return this.formFormProducto.get('productos') as FormArray;
   }
   toggleCollapse() {
     this.isCollapsed = !this.isCollapsed;
@@ -99,11 +117,40 @@ export class GrupoComponent {
       cod_gru: ['', Validators.required],
       id_familia: [null, Validators.required],
       id_linea: [null, Validators.required],
+      des_fam: [""],
+      des_line: [""]
     });
     this.grupos.push(nuevaFamilia);
   }
+  addProducto() {
+    if (this.productos.length > 9) {
+      this.totastService.warning("Solo se permite agregar 10 productos")
+      return
+    }
+    this.totalProducto += 1
+    let codProducto = ""
+    if(this.totalProducto < 10) {
+      codProducto = `00${this.totalProducto}`
+    } else if (this.totalProducto < 99 && this.totalProducto > 9) {
+      codProducto = `0${this.totalProducto}`
+    } else {
+      codProducto = `${this.totalProducto}`
+    }
+    const nuevoProducto = this.formBuilder.group({
+      cod_product: [`${this.codigoConjunto}-${codProducto}` , Validators.required],
+      name_product: ['', Validators.required],
+      des_product: [null, Validators.required],
+      id_grupo: [this.idGrupoProducto, Validators.required],
+      id_user: [this.tokenService.decodeToken().id, Validators.required],
+    });
+    this.productos.push(nuevoProducto);
+    console.log()
+  }
   eliminarGrupo(index: number) {
     this.grupos.removeAt(index);
+  }
+  eliminarProducto(index: number) {
+    this.productos.removeAt(index);
   }
   guardar() {
     this.submitted = true;
@@ -177,10 +224,19 @@ export class GrupoComponent {
       },
     });
   }
-  getLineaByIdFamilia(event: any, index: number) {
-    this.lineaService.getByIdFamilia(event.id_fam).subscribe({
+  getLineaByIdFamiliaCreate(event: any, index:number) {
+    const grupoFormGroup = this.grupos.at(index) as FormGroup;
+    grupoFormGroup.get('des_fam')?.setValue(event.des_fam);
+    this.getLineByIdFamilia(event.id_fam)
+  }
+  getLineaByIdFamiliaUpdate (event: any) {
+    this.getLineByIdFamilia(event.id_fam)
+  }
+  getLineByIdFamilia(id: number) {
+    this.lineaService.getByIdFamilia(id).subscribe({
       next: (res: any) => {
         this.linea = res;
+        this.formFormUpdate.patchValue({id_linea: 0});
       },
       error: (err: any) => {
         console.log(err);
@@ -201,6 +257,7 @@ export class GrupoComponent {
     this.lineaService.getAll(10000, 0, 1).subscribe({
       next: (res: any) => {
         this.lineaFilters = res?.registros;
+        this.linea = res?.registros;
       },
       error: (err: any) => {
         console.log(err);
@@ -254,9 +311,10 @@ export class GrupoComponent {
           des_gru: res.des_gru,
           cod_gru: res.cod_gru,
           id_linea: res.linea_id_line,
+          id_familia: res.fam_id_familia
         });
-        this.idGrupo = res.linea_id_line;
-        this.modalService.open(model, { size: 'lg' });
+        this.idGrupo = id;
+        this.modalService.open(model, { size: 'xl' });
       },
       error: (err: any) => {
         this.totastService.error(err.error.error);
@@ -369,5 +427,45 @@ export class GrupoComponent {
       },
     }
     this.getList(this.limit, this.offset, this.currentPage)
+  }
+  getGrupoLinea (event: any, index: number) {
+    const lineaFormGroup = this.grupos.at(index) as FormGroup;
+    lineaFormGroup.get('des_line')?.setValue(event.des_line);
+  }
+  guardarProducto () {
+    this.submitted = true;
+    if (this.formFormProducto.invalid) {
+      return;
+    }
+    const producto = this.formFormProducto.value.productos as ProductoRequest[];
+    this.productoService.register(producto).subscribe({
+      next: (res: any) => {
+        this.totastService.success(res.message);
+        this.formFormProducto.reset();
+        this.modalService.dismissAll();
+        this.errors = [];
+      },
+      error: (err: any) => {
+        if (err.status !== 400) {
+          this.totastService.error(err.error.error);
+        } else {
+          this.errors = err.error.message;
+        }
+      },
+      complete: () => {
+        this.submitted = false;
+        this.getGrupo();
+        this.productos.clear()
+      },
+    });
+  }
+  agregarProducto (model: any, item: any) {
+    this.codigoConjunto = item.cod_gru_final
+    this.totalProducto = item.total_product
+    this.idGrupoProducto = item.id_grou
+    this.modalService.open(model, { size: 'xl' });
+  }
+  verProducto (model: any, id: number) {
+    this.modalService.open(model, { size: 'xl' });
   }
 }

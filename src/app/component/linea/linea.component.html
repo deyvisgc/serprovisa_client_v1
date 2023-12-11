@@ -29,7 +29,7 @@
   
                 <tr  *ngFor="let item of result | search:textSearch; let i = index">
                  <td>
-                    {{i}}
+                    {{i + 1}}
                  </td>
                   <td>
                     {{item.cod_lin}}
@@ -91,7 +91,7 @@
                           <div class="col-md-3">
                             <div class="form-group">
                               <label for="inputCodigo">Codigo Linea</label>
-                              <input type="text" class="form-control" readonly formControlName="cod_lin" id="inputCodigo"
+                              <input type="text" class="form-control" formControlName="cod_lin" id="inputCodigo"
                                 [ngClass]="{ 'is-invalid': submitted && lineaFormGroup.get('cod_lin')?.invalid }" />
                               <div *ngIf="submitted && lineaFormGroup.get('cod_lin')?.invalid" class="invalid-feedback">
                                 <div *ngIf="lineaFormGroup.get('cod_lin')?.hasError('required')">Código es requerido</div>

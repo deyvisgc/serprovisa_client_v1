@@ -6,7 +6,7 @@
         <h4 class="card-title">Listado de Grupo</h4>
         <p></p>
         <button class="btn btn-info btn-group-lg btn-sm" (click)="toggleCollapse()" [attr.aria-expanded]="isCollapsed"
-          aria-controls="collapseExample">Filtros <i class="fas fa-search-plus"></i></button>
+          aria-controls="collapseExample">Filtros Avanzados <i class="fas fa-search-plus"></i></button>
         <p></p>
         <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed" style="border-radius: 1px solid;">
           <div class="card">
@@ -90,6 +90,8 @@
                 <th class="text-dark font-medium fs-4">Descripcion</th>
                 <th class="text-dark font-medium fs-4">Familia</th>
                 <th class="text-dark font-medium fs-4">Linea</th>
+                <th class="text-dark font-medium fs-4">Codigo en Conjunto</th>
+                <th class="text-dark font-medium fs-4">Total Producto</th>
                 <th class="text-dark font-medium fs-4">Fecha Registro</th>
                 <th class="text-dark font-medium fs-4">Opciones</th>
               </tr>
@@ -100,7 +102,7 @@
 
                 <tr *ngFor="let item of result | search:textSearch; let i = index">
                   <td>
-                    {{i}}
+                    {{i + 1}}
                   </td>
                   <td>
                     {{item.cod_gru}}
@@ -108,15 +110,25 @@
                   <td class="fs-4">{{item.des_gru}}</td>
                   <td class="fs-4">{{item.cod_fam}} - {{item.des_fam}}</td>
                   <td class="fs-4">{{item.cod_lin}} - {{item.des_line}}</td>
+                  <td class="fs-4">{{item.cod_gru_final}} </td>
+                  <td class="fs-4">{{item.total_product}} </td>
                   <td class="fs-4">{{item.fec_regis | date:"shortDate"}}</td>
                   <td>
-                    <button type="button" (click)="edit(modalActualizar, item.id_line)"
+                    <button type="button" ngbTooltip="Actualizar Grupo" (click)="edit(modalActualizar, item.id_grou)"
                       class="btn btn-outline-success w-sm btn-sm" style="margin-left: 5px">
                       <span><i class="fas fa-edit"></i></span>
                     </button>
-                    <button type="button" (click)="eliminar(item.id_line)" class="btn w-sm btn-sm btn-outline-danger"
+                    <button type="button" ngbTooltip="Eliminar Grupo" (click)="eliminar(item.id_grou)" class="btn w-sm btn-sm btn-outline-danger"
                       style="margin-left: 5px">
                       <span><i class="fas fa-trash"></i></span>
+                    </button>
+                    <button type="button" ngbTooltip="Agregar Producto" (click)="agregarProducto(modalAgregarProducto, item)"
+                      class="btn btn-outline-info w-sm btn-sm" style="margin-left: 5px">
+                      <span><i class="fas fa-plus"></i></span>
+                    </button>
+                    <button type="button" ngbTooltip="Ver Productos" (click)="verProducto(modalActualizar, item.id_grou)" class="btn w-sm btn-sm btn-outline-warning"
+                      style="margin-left: 5px">
+                      <span><i class="fas fa-eye"></i></span>
                     </button>
                   </td>
                 </tr>
@@ -162,7 +174,7 @@
                 <div class="col-md-2">
                   <div class="form-group">
                     <label for="inputCodigo">Codigo Grupo</label>
-                    <input type="text" class="form-control" readonly formControlName="cod_gru" id="inputCodigo"
+                    <input type="text" class="form-control" formControlName="cod_gru" id="inputCodigo"
                       [ngClass]="{ 'is-invalid': submitted && grupoFormGroup.get('cod_gru')?.invalid }" />
                     <div *ngIf="submitted && grupoFormGroup.get('cod_gru')?.invalid" class="invalid-feedback">
                       <div *ngIf="grupoFormGroup.get('cod_gru')?.hasError('required')">Código es requerido</div>
@@ -175,7 +187,7 @@
                     <div class="custom-dropdown-container">
                       <ng-select [ngClass]="{ 'is-invalid': submitted && grupoFormGroup.get('id_familia')?.errors }"
                         [items]="familia" bindLabel="des_fam" formControlName="id_familia" bindValue="id_fam"
-                        (change)="getLineaByIdFamilia($event, i)">
+                        (change)="getLineaByIdFamiliaCreate($event, i)">
                       </ng-select>
                       <div *ngIf="submitted && grupoFormGroup.get('id_familia')?.errors" class="invalid-feedback">
                         <div *ngIf="grupoFormGroup.get('id_familia')?.errors?.['required']">Familia es requerida</div>
@@ -188,7 +200,7 @@
                     <label for="exampleInputPassword1">Seleccionar Linea</label>
                     <div class="custom-dropdown-container">
                       <ng-select [ngClass]="{ 'is-invalid': submitted && grupoFormGroup.get('id_linea')?.errors }"
-                        [items]="linea" bindLabel="des_line" formControlName="id_linea" bindValue="id_line">
+                        [items]="linea" bindLabel="des_line" (change)="getGrupoLinea($event, i)" formControlName="id_linea" bindValue="id_line">
                       </ng-select>
                       <div *ngIf="submitted && grupoFormGroup.get('id_linea')?.errors" class="invalid-feedback">
                         <div *ngIf="grupoFormGroup.get('id_linea')?.errors?.['required']">Familia es requerida</div>
@@ -227,7 +239,7 @@
   <div class="modal-body">
     <form [formGroup]="formFormUpdate" (ngSubmit)="update()">
       <div class="row d-flex justify-content-around">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <div class="form-group">
             <label for="inputNombre">Nombre Grupo</label>
             <input type="text" class="form-control" formControlName="des_gru" id="inputNombre"
@@ -237,7 +249,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <div class="form-group">
             <label for="inputCodigo">Codigo Grupo</label>
             <input type="text" class="form-control" readonly formControlName="cod_gru" id="inputCodigo"
@@ -247,14 +259,27 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="exampleInputPassword1">Seleccionar Familia</label>
+            <div class="custom-dropdown-container">
+              <ng-select [ngClass]="{ 'is-invalid': submitted && f.get('id_familia')?.errors }"
+                [items]="familia" bindLabel="des_fam" formControlName="id_familia" bindValue="id_fam"
+                (change)="getLineaByIdFamiliaUpdate($event)">
+              </ng-select>
+              <div *ngIf="submitted && f.get('id_familia')?.errors" class="invalid-feedback">
+                <div *ngIf="f.get('id_familia')?.errors?.['required']">Familia es requerida</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
           <div class="form-group">
             <label for="exampleInputPassword1">Seleccionar Linea</label>
             <div class="custom-dropdown-container">
-              <ng-select [ngClass]="{ 'is-invalid': submitted && f.get('id_linea')?.errors }" [items]="linea"
-                bindLabel="des_line" formControlName="id_linea" bindValue="id_line">
+              <ng-select [ngClass]="{ 'is-invalid': submitted && f.get('id_linea')?.errors }" formControlName="id_linea" [items]="linea" bindLabel="des_line" f="id_linea" bindValue="id_line">
               </ng-select>
-              <div *ngIf="submitted && f.get('id_linea')?.errors" class="invalid-feedback">
+              <div *ngIf="submitted && f.get('id_linea')?.errors"  class="invalid-feedback">
                 <div *ngIf="f.get('id_linea')?.errors?.['required']">Linea es requerida</div>
               </div>
             </div>
@@ -262,6 +287,77 @@
         </div>
       </div>
       <p></p>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-outline-info">Guardar</button>
+      </div>
+    </form>
+  </div>
+
+</ng-template>
+
+<ng-template #modalAgregarProducto let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Agregar Producto</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="alert alert-danger" *ngIf="errors.length > 0" role="alert">
+      <span *ngFor="let err of errors; let last = last">
+        <span [innerHTML]="'*' + err.mensaje + (last ? '' : '<br>')"></span>
+      </span>
+    </div>
+    <form [formGroup]="formFormProducto" (ngSubmit)="guardarProducto()">
+      <div formArrayName="productos">
+        <div class="container">
+          <div *ngFor="let producto of productos.controls; let i = index" [formGroupName]="i">
+            <ng-container *ngIf="producto as productoFormGroup">
+              <div class="row d-flex justify-content-around">
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="inputCodigo">Codigo Producto</label>
+                    <input type="text" class="form-control" readonly formControlName="cod_product" id="inputCodigo"
+                      [ngClass]="{ 'is-invalid': submitted && productoFormGroup.get('cod_product')?.invalid }" />
+                    <div *ngIf="submitted && productoFormGroup.get('cod_product')?.invalid" class="invalid-feedback">
+                      <div *ngIf="productoFormGroup.get('cod_product')?.hasError('required')">Código es requerido</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="inputNombre">Nombre Producto</label>
+                    <input type="text" class="form-control" formControlName="name_product" id="inputNombre"
+                      [ngClass]="{ 'is-invalid': submitted && productoFormGroup.get('name_product')?.invalid }" />
+                    <div *ngIf="submitted && productoFormGroup.get('name_product')?.invalid" class="invalid-feedback">
+                      <div *ngIf="productoFormGroup.get('name_product')?.hasError('required')">Nombre es requerido</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="inputNombre">Descripción Producto</label>
+                    <input type="text" class="form-control" formControlName="des_product" id="inputNombre"
+                      [ngClass]="{ 'is-invalid': submitted && productoFormGroup.get('des_product')?.invalid }" />
+                    <div *ngIf="submitted && productoFormGroup.get('des_product')?.invalid" class="invalid-feedback">
+                      <div *ngIf="productoFormGroup.get('des_product')?.hasError('required')">Descripción es requerido</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-1">
+                  <div class="form-group">
+                    <button type="button" (click)="eliminarProducto(i)" class="btn w-sm btn-sm btn-outline-danger"
+                      style="margin-top: 25px">
+                      <span><i class="fas fa-trash"></i></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+          <p></p>
+          <button type="button" class="btn btn-outline-success" (click)="addProducto()">Agregar Producto</button>
+          <p></p>
+        </div>
+      </div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-outline-info">Guardar</button>
       </div>
