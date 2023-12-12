@@ -1,47 +1,22 @@
 import { Injectable } from '@angular/core';
-import Swal from 'sweetalert2';
+import { NotifierService } from 'angular-notifier';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
 
-  constructor() { }
-  // mensaje de exito
+  constructor(private notifierService: NotifierService) { }
    success (message:string) {
-    Swal.fire({
-      position: "top-end",
-      icon: "success",
-      title: message,
-      showConfirmButton: false,
-      timer: 1500
-    });
+    this.notifierService.notify('success', message);
   }
    warning (message:string) {
-    Swal.fire({
-      position: "top-end",
-      icon: "warning",
-      title: message,
-      showConfirmButton: false,
-      timer: 1500
-    });
+    this.notifierService.notify('warning', message);
   }
    info (message:string) {
-    Swal.fire({
-      position: "top-end",
-      icon: "info",
-      title: message,
-      showConfirmButton: false,
-      timer: 1500
-    });
+    this.notifierService.notify('info', message);
   }
    error (message:string) {
-    Swal.fire({
-      position: "top-end",
-      icon: "error",
-      title: "Oops...",
-      text: message,
-      timer: 1500
-    });
+    this.notifierService.notify('error', message);
   }
 }

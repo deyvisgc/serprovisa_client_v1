@@ -11,16 +11,6 @@
   <!-- ============================================================== -->
   <!-- create new -->
   <!-- ============================================================== -->
-  <li class="nav-item d-none d-md-block" ngbDropdown placement="bottom-end">
-    <a href="javascript:void(0)" class="nav-link" id="dropdownBasic1" ngbDropdownToggle>
-      Create New
-    </a>
-    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-      <button ngbDropdownItem>Action - 1</button>
-      <button ngbDropdownItem>Another Action</button>
-      <button ngbDropdownItem>Something else is here</button>
-    </div>
-  </li>
 </ul>
 <!-- ============================================================== -->
 <!-- Right side toggle and nav items -->
@@ -39,20 +29,15 @@
       aria-expanded="false"
     >
       <img
-        src="assets/images/users/user1.jpg"
+        src="assets/images/users/user5.jpg"
         alt="user"
         class="rounded-circle"
         width="31"
       />
-      <span class="ms-2">Steve Jobs</span>
+      <span class="ms-2">{{usuario}}</span>
     </a>
     <div class="dropdown-menu-right" ngbDropdownMenu>
       <a class="dropdown-item" href="javascript:void(0)"> My Profile</a>
-      <a class="dropdown-item" href="javascript:void(0)"> My Balance</a>
-      <a class="dropdown-item" href="javascript:void(0)"> Inbox</a>
-      <div class="dropdown-divider"></div>
-      <a class="dropdown-item" href="javascript:void(0)"> Account Setting</a>
-      <div class="dropdown-divider"></div>
       <a class="dropdown-item" href="javascript:void(0)"> Logout</a>
     </div>
   </li>

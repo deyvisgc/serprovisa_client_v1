@@ -149,7 +149,7 @@ export class LineaComponent {
       } 
     })
   }
-  eliminar(users_id: number) {
+  eliminar(id: number) {
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton: 'btn btn-success',
@@ -168,14 +168,7 @@ export class LineaComponent {
       })
       .then(result => {
         if (result.value) {
-          Swal.fire({
-            text: 'Eliminando Linea...',
-            background: "#F3EAEA",
-            allowOutsideClick: false,
-            allowEscapeKey: false
-          })
-          Swal.showLoading()
-          this.lineaService.delete(users_id).subscribe({
+          this.lineaService.delete(id).subscribe({
             next: (res: any) => {
               this.totastService.success(res.message)
             },

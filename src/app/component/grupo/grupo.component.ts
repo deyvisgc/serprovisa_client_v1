@@ -268,7 +268,7 @@ export class GrupoComponent {
       },
     });
   }
-  eliminar(users_id: number) {
+  eliminar(id: number) {
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton: 'btn btn-success',
@@ -287,14 +287,7 @@ export class GrupoComponent {
       })
       .then((result) => {
         if (result.value) {
-          Swal.fire({
-            text: 'Eliminando Grupo...',
-            background: '#F3EAEA',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-          });
-          Swal.showLoading();
-          this.grupoService.delete(users_id).subscribe({
+          this.grupoService.delete(id).subscribe({
             next: (res: any) => {
               this.totastService.success(res.message);
             },

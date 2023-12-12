@@ -4,7 +4,6 @@ import { PaginationComponent } from './component/pagination/pagination.component
 import { SearchPipe } from './pipe/search.pipe';
 
 
-
 @NgModule({
   declarations: [PaginationComponent, SearchPipe],
   imports: [

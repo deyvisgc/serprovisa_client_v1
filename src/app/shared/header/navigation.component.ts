@@ -1,5 +1,6 @@
 import { Component, AfterViewInit, EventEmitter, Output } from '@angular/core';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TokenService } from 'src/app/util/token.service';
 
 declare var $: any;
 
@@ -11,11 +12,12 @@ declare var $: any;
 })
 export class NavigationComponent implements AfterViewInit {
   @Output() toggleSidebar = new EventEmitter<void>();
-
-
+  usuario = ""
   public showSearch = false;
 
-  constructor(private modalService: NgbModal) {
+  constructor(private modalService: NgbModal, private token: TokenService) {
+    const dataToken = token.decodeToken()
+    this.usuario = dataToken.name
   }
 
   // This is for Notifications

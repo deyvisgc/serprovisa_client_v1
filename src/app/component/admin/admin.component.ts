@@ -138,13 +138,6 @@ export class AdminComponent  implements OnInit {
       })
       .then(result => {
         if (result.value) {
-          Swal.fire({
-            text: 'Eliminando usuario...',
-            background: "#F3EAEA",
-            allowOutsideClick: false,
-            allowEscapeKey: false
-          })
-          Swal.showLoading()
           this.adminService.delete(users_id).subscribe({
             next: (res) => {
               this.totastService.success(res.message)
