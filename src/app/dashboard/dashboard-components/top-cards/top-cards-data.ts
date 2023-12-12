@@ -9,27 +9,27 @@ export const topcards: topcard[] = [
 
     {
         bgcolor: 'success',
-        icon: 'bi bi-wallet',
+        icon: 'fas fa-house',
         title: '$21k',
-        subtitle: 'Yearly Earning'
+        subtitle: 'Familias registradas'
     },
     {
         bgcolor: 'danger',
-        icon: 'bi bi-coin',
+        icon: 'fas fa-clipboard-list',
         title: '$1k',
-        subtitle: 'Refund given'
+        subtitle: 'Lineas registradas'
     },
     {
         bgcolor: 'warning',
-        icon: 'bi bi-basket3',
+        icon: 'fas fa-layer-group',
         title: '456',
-        subtitle: 'Yearly Project'
+        subtitle: 'Grupos registradas'
     },
     {
         bgcolor: 'info',
-        icon: 'bi bi-bag',
+        icon: 'fas fa-box', 
         title: '210',
-        subtitle: 'Weekly Sales'
+        subtitle: 'Productos registradas'
     },
 
 ] 
