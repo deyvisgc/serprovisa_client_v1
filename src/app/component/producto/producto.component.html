@@ -133,14 +133,14 @@
                     <td class="fs-4">{{item.us_full_name}} </td>
                     <td class="fs-4">{{item.fech_regis | date:"shortDate"}}</td>
                     <td>
-                      <!-- <button type="button" ngbTooltip="Actualizar Grupo" (click)="edit(null, item.id_prod)"
+                      <button type="button" ngbTooltip="Actualizar Producto" (click)="edit(modalActualizar, item.id_prod)"
                         class="btn btn-outline-success w-sm btn-sm" style="margin-left: 5px">
                         <span><i class="fas fa-edit"></i></span>
-                      </button> -->
-                      <button type="button" ngbTooltip="Eliminar Grupo" (click)="eliminar(item.id_prod)" class="btn w-sm btn-sm btn-outline-danger"
+                      </button>
+                      <!-- <button type="button" ngbTooltip="Eliminar Producto" (click)="eliminar(item.id_prod)" class="btn w-sm btn-sm btn-outline-danger"
                         style="margin-left: 5px">
                         <span><i class="fas fa-trash"></i></span>
-                      </button>
+                      </button> -->
                     </td>
                   </tr>
   
@@ -208,7 +208,7 @@
                   <div class="col-md-4">
                     <div class="form-group">
                       <label for="inputCodigo">Codigo Producto</label>
-                      <input type="text" class="form-control" readonly formControlName="cod_product" id="inputCodigo"
+                      <input type="text" class="form-control text-uppercase" readonly formControlName="cod_product" id="inputCodigo"
                         [ngClass]="{ 'is-invalid': submitted && productoFormGroup.get('cod_product')?.invalid }" />
                       <div *ngIf="submitted && productoFormGroup.get('cod_product')?.invalid" class="invalid-feedback">
                         <div *ngIf="productoFormGroup.get('cod_product')?.hasError('required')">Código es requerido</div>
@@ -218,7 +218,7 @@
                   <div class="col-md-4">
                     <div class="form-group">
                       <label for="inputNombre">Nombre Producto</label>
-                      <input type="text" class="form-control" formControlName="name_product" id="inputNombre"
+                      <input type="text" class="form-control text-uppercase" formControlName="name_product" id="inputNombre"
                         [ngClass]="{ 'is-invalid': submitted && productoFormGroup.get('name_product')?.invalid }" />
                       <div *ngIf="submitted && productoFormGroup.get('name_product')?.invalid" class="invalid-feedback">
                         <div *ngIf="productoFormGroup.get('name_product')?.hasError('required')">Nombre es requerido</div>
@@ -228,7 +228,7 @@
                   <div class="col-md-4">
                     <div class="form-group">
                       <label for="inputNombre">Descripción Producto</label>
-                      <input type="text" class="form-control" formControlName="des_product" id="inputNombre"
+                      <input type="text" class="form-control text-uppercase" formControlName="des_product" id="inputNombre"
                         [ngClass]="{ 'is-invalid': submitted && productoFormGroup.get('des_product')?.invalid }" />
                       <div *ngIf="submitted && productoFormGroup.get('des_product')?.invalid" class="invalid-feedback">
                         <div *ngIf="productoFormGroup.get('des_product')?.hasError('required')">Descripción es requerido</div>
@@ -255,5 +255,39 @@
         </div>
       </form>
     </div>
-  
+  </ng-template>
+  <ng-template #modalActualizar let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Actualizar Producto</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="formUpdateForm" (ngSubmit)="update()">
+        <div class="row d-flex justify-content-around">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="inputNombre">Nombre Producto</label>
+                <input type="text" class="form-control text-uppercase" formControlName="name_product" id="inputNombre" [ngClass]="{ 'is-invalid': submitted && f.get('name_product')?.invalid }" />
+                <div *ngIf="submitted && f.get('name_product')?.invalid" class="invalid-feedback">
+                  <div *ngIf="f.get('name_product')?.hasError('required')">Nombre es requerido</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="inputCodigo">Detalle Producto</label>
+                <input type="text" class="form-control text-uppercase" formControlName="des_product" id="inputCodigo"
+                  [ngClass]="{ 'is-invalid': submitted && f.get('des_product')?.invalid }" />
+                <div *ngIf="submitted && f.get('des_product')?.invalid" class="invalid-feedback">
+                  <div *ngIf="f.get('des_product')?.hasError('required')">Detalle es requerido</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p></p>
+           <div class="modal-footer">
+            <button type="submit" class="btn btn-outline-info" >Guardar</button>
+            </div>
+      </form>
+    </div>
   </ng-template>

@@ -42,4 +42,7 @@ export class AdminService {
   delete(id:number) {
     return this.http.delete<any>(UriConstante.ADMIN_RESOURCE +   `/${id}` )
   }
+  getCountDashboard() : Observable<any> {
+    return this.http.get<any>(`${UriConstante.ADMIN_RESOURCE}/count-total`)
+  }
 }

@@ -9,4 +9,5 @@ export class UriConstante {
   public static readonly GRUPO_RESORCE = environment.host + "group"
   public static readonly GRUPO_LINEA_RESORCE = environment.host + "group/grupo-linea"
   public static readonly PRODUCTO_RESORCE = environment.host + "products"
+  
 }

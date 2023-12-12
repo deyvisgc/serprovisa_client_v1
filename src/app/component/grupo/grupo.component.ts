@@ -13,7 +13,7 @@ import { Filtros } from 'src/app/core/interface/filtros.request';
 import { TokenService } from 'src/app/util/token.service';
 import { ProductoRequest } from 'src/app/core/interface/producto.request';
 import { ProductoService } from '../service/producto.service';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 dayjs().format()
 @Component({
   selector: 'app-grupo',
@@ -468,7 +468,12 @@ export class GrupoComponent {
     this.idGrupoProducto = item.id_grou
     this.modalService.open(model, { size: 'xl' });
   }
-  verProducto (model: any, id: number) {
-    this.router.navigate(['system/component/asignar-product/', id]);
+  verProducto (id: number) {
+    const obj = {
+      id: id,
+      type: 'group'
+    }
+    const navigationExtra: NavigationExtras = {state: obj}
+    this.router.navigate(['system/component/asignar-product/'], navigationExtra)
   }
 }

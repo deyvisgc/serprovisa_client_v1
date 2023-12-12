@@ -39,10 +39,6 @@ const routes: Routes = [
     component: ProductoComponent,
   },
   {
-    path: "asignar-product/:id",
-    component: ProductoComponent,
-  },
-  {
     path: 'alert',
     component: NgbdAlertBasicComponent
   }

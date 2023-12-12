@@ -1,9 +1,15 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit } from '@angular/core';
 
 @Component({
-  templateUrl: './dashboard.component.html'
+  templateUrl: './dashboard.component.html',
 })
-export class DashboardComponent implements AfterViewInit {
+export class DashboardComponent implements OnInit {
   subtitle: string;
-  ngAfterViewInit() { }
+
+  constructor(
+  
+  ) {}
+  ngOnInit(): void {
+  }
+ 
 }

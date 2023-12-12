@@ -9,7 +9,7 @@ import { FamilyService } from '../service/family.service';
 import { NotificationService } from 'src/app/core/service/notification.service';
 import { GrupoService } from '../service/grupo.service';
 import { ProductoService } from '../service/producto.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../service/admin.service';
 import { TokenService } from 'src/app/util/token.service';
 import { ProductoRequest } from 'src/app/core/interface/producto.request';
@@ -24,8 +24,6 @@ export class ProductoComponent implements OnInit {
   private modalService = inject(NgbModal);
   today = inject(NgbCalendar).getToday();
 	model: NgbDateStruct;
-
-
   closeResult = '';
   filterValue = '';
   list: List;
@@ -38,6 +36,7 @@ export class ProductoComponent implements OnInit {
   grupoFilters: any[] = [];
   responsables: any[] = [];
   formFormProducto: FormGroup;
+  formUpdateForm: FormGroup;
   submitted = false;
   isLoading = false;
   totalRegistros = 0;
@@ -48,16 +47,15 @@ export class ProductoComponent implements OnInit {
   totalPages: number = 1;
   textSearch: string = '';
   errors: any[] = [];
-  idGrupo: number;
   idGrupoProducto: number = 0;
   isCollapsed = true;
-  idLinea = 0
-  idFamilia = 0
+  idProducto = 0
   codigoConjunto: string = ""
   totalProducto: number = 0
   totalProductoTemp: number = 0
   codGrupoTemp: string = ""
-  codigoProducts: any[] = [] 
+  codigoProducts: any[] = []
+  url: any
   filtros: FiltrosProducto = {
     fecha_ini: {
       year: dayjs().subtract(1, 'month').year(),
@@ -88,29 +86,28 @@ export class ProductoComponent implements OnInit {
     private grupoService: GrupoService,
     private productoService: ProductoService,
     private adminService: AdminService,
-    private route: ActivatedRoute,
     private tokenService: TokenService,
+    private router: Router,
     config: NgbModalConfig
   ) {
     config.backdrop = 'static';
 		config.keyboard = false;
+    const navigation = this.router.getCurrentNavigation();
+    this.url = navigation && navigation.extras ? navigation.extras?.state : null
+    if (this.url) {
+      if (this.url.type === "users") this.filtros.user = this.url.id.toString()
+      if (this.url.type === "group") this.filtros.grupo = this.url.id.toString()
+      this.filtros.fecha_ini = { year: 0, month: 0, day: 0}
+      this.filtros.fecha_fin = { year: 0, month: 0, day: 0}
+    }
     this.inicializarFormulario()
   }
   ngOnInit(): void {
-
-    this.route.params.subscribe(params => {
-      const id = params['id'] ? +params['id'] : null;
-      if (id !== null) {
-        this.filtros.grupo = id.toString()
-        this.filtros.fecha_ini = { year: 0, month: 0, day: 0}
-        this.filtros.fecha_fin = { year: 0, month: 0, day: 0}
-      }
-      this.getProducto()
-      this.getLinea()
-      this.getFamilia()
-      this.getGrupo()
-      this.getResponsable()
-    });
+    this.getProducto()
+    this.getLinea()
+    this.getFamilia()
+    this.getGrupo()
+    this.getResponsable()
   }
   open(content: TemplateRef<any>) {
     const opcionesModal: NgbModalOptions = {
@@ -140,6 +137,13 @@ export class ProductoComponent implements OnInit {
     this.formFormProducto = this.formBuilder.group({
       productos: this.formBuilder.array([]),
     });
+    this.formUpdateForm = this.formBuilder.group({
+      name_product: ['', Validators.required],
+      des_product: ['', Validators.required],
+    });
+  }
+  get f() {
+    return this.formUpdateForm;
   }
   toggleCollapse() {
     this.isCollapsed = !this.isCollapsed;
@@ -265,7 +269,21 @@ export class ProductoComponent implements OnInit {
       },
     });
   }
-  edit(model: any, id: number) {}
+  edit(model: any, id: number) {
+    this.productoService.getById(id).subscribe({
+      next: (res: any) => {
+        this.formUpdateForm.patchValue({
+          name_product: res.name_product,
+          des_product: res.des_product,
+        });
+        this.idProducto = res.id_prod;
+        this.modalService.open(model);
+      },
+      error: (err: any) => {
+        this.totastService.error(err.error.error);
+      },
+    });
+  }
   eliminar(id: number) {}
   onPageChange(event: { page: number, limit: number, offset: number }): void {
     this.currentPage = event.page;
@@ -383,5 +401,30 @@ export class ProductoComponent implements OnInit {
     productoFormGroup.get('id_grupo')?.setValue(event.id_grou);
     this.codigoProducts.push(event.cod_gru_final)
   }
-
+  update() {
+    this.submitted = true;
+    if (this.formUpdateForm.invalid) {
+      return;
+    }
+    this.productoService
+      .update(this.idProducto, this.formUpdateForm.value)
+      .subscribe({
+        next: (res: any) => {
+          this.totastService.success(res.message);
+          this.formUpdateForm.reset();
+          this.modalService.dismissAll();
+        },
+        error: (err: any) => {
+          if (err.status !== 400) {
+            this.totastService.error(err.error.error);
+          } else {
+            this.totastService.error(err.error.message);
+          }
+        },
+        complete: () => {
+          this.submitted = false;
+          this.getProducto();
+        },
+      });
+  }
 }

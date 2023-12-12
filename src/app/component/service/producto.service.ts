@@ -35,11 +35,14 @@ export class ProductoService {
     return this.http.get(UriConstante.PRODUCTO_RESORCE, {params: params});
   }
   getById(id: number) : Observable<any> {
-    return this.http.get<any>(UriConstante.PRODUCTO_RESORCE +   `/${id}` )
+    return this.http.get<any>(UriConstante.PRODUCTO_RESORCE + `/${id}` )
   }
   register(product: ProductoRequest[]): Observable<Response> {
     return this.http
     .post<any>(UriConstante.PRODUCTO_RESORCE, product)
+  }
+  getLastProduct() : Observable<any> {
+    return this.http.get<any>(`${UriConstante.PRODUCTO_RESORCE}/getLastProducts`)
   }
   registerMaivo(product: ProductoRequest[]): Observable<Response> {
     return this.http
@@ -52,4 +55,5 @@ export class ProductoService {
   delete(id:number) {
     return this.http.delete<any>(UriConstante.PRODUCTO_RESORCE +   `/${id}` )
   }
+
 }
