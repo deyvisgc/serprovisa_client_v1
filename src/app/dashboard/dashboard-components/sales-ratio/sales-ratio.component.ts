@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -12,6 +13,7 @@ import {
   ApexGrid,
   ApexPlotOptions
 } from 'ng-apexcharts';
+import { ProductoService } from 'src/app/component/service/producto.service';
 
 export type salesChartOptions = {
   series: ApexAxisChartSeries | any;
@@ -34,21 +36,24 @@ export type salesChartOptions = {
   templateUrl: './sales-ratio.component.html'
 })
 export class SalesRatioComponent implements OnInit {
-
   @ViewChild("chart") chart: ChartComponent = Object.create(null);
   public salesChartOptions: Partial<salesChartOptions>;
-  constructor() {
-    this.salesChartOptions = {
-      series: [
-        {
-          name: "2020",
-          data: [20, 40, 50, 30, 40, 50, 30, 30, 40, 20, 30, 15],
-        },
-        {
-          name: "2022",
-          data: [10, 20, 40, 60, 20, 40, 60, 60, 20, 30, 40, 35],
-        },
-      ],
+  dataDefault = [
+    {
+      name: "2020",
+      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    },
+  ]
+  constructor(private producService: ProductoService, private router: Router) {
+    this.construirReport(this.dataDefault)
+  }
+
+  ngOnInit(): void {
+    this.getReport()
+  }
+  construirReport (series: any[]) {
+   this.salesChartOptions = {
+      series: series,
       chart: {
         fontFamily: 'Rubik,sans-serif',
         height: 265,
@@ -85,18 +90,18 @@ export class SalesRatioComponent implements OnInit {
       },
       xaxis: {
         categories: [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec"
+          "ENE",
+          "FEB",
+          "MAR",
+          "ABR",
+          "MAY",
+          "JUN",
+          "JUL",
+          "AGO",
+          "SEP",
+          "OCT",
+          "NOV",
+          "DIC"
         ],
       },
       tooltip: {
@@ -104,8 +109,33 @@ export class SalesRatioComponent implements OnInit {
       }
     };
   }
-
-  ngOnInit(): void {
+  getReport() {
+    this.producService.getReport().subscribe({
+      next: (res: any) => {
+        const groupedByYear = res.reduce((acc: any, item: any) => {
+          const key = `${item.year}`;
+          if (!acc[key]) {
+            acc[key] = [];
+          }
+          acc[key].push({
+            mes: item.mes,
+            total_productos: item.total_productos,
+          });
+          return acc;
+        }, {});
+        
+        // Construir el array final
+        const arrayReport = Object.entries(groupedByYear).map(([year, values]) => ({
+          name: year,
+          data: Array.from({ length: 12 }, (_, index) =>
+            ((values as { mes: number; total_productos: number }[]).find((item) => item.mes === index + 1)?.total_productos || 0)
+          ),
+        }));
+        this.construirReport(arrayReport)
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
   }
-
 }

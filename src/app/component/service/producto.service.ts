@@ -42,7 +42,10 @@ export class ProductoService {
     .post<any>(UriConstante.PRODUCTO_RESORCE, product)
   }
   getLastProduct() : Observable<any> {
-    return this.http.get<any>(`${UriConstante.PRODUCTO_RESORCE}/getLastProducts`)
+    return this.http.get<any>(`${UriConstante.PRODUCTO_RESORCE}/lastProducts`)
+  }
+  getReport() : Observable<any> {
+    return this.http.get<any>(`${UriConstante.PRODUCTO_RESORCE}/report`)
   }
   registerMaivo(product: ProductoRequest[]): Observable<Response> {
     return this.http
